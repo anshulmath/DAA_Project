@@ -12,6 +12,7 @@
 \usepackage{xcolor}
 \usepackage{etoolbox}
 \usepackage{colortbl}
+\usepackage{float}
 % Include links
 \usepackage[hidelinks]{hyperref}
 
@@ -116,7 +117,8 @@ For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path
 When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
 
 \subsection{Pseudocode}
-\begin{algorithm}[t]
+Below is the pseudocode for the algorithm. 
+\begin{algorithm}[H]
 \caption{\textbf{Maximum Climbers Calculation}}\label{alg:max_climbers}
 \begin{algorithmic}
     \Statex \textbf{ALGORITHM} \textsc{MaximumClimbers}($T, r, k$)
@@ -157,14 +159,98 @@ When $d = k$, then the distingueshed path finishes at $v$, so this path must be 
 \end{algorithmic}
 \end{algorithm}
 
+\section{Analysis of Algorithm}
+\subsection{Time Complexity}
+Let $n$ be the number of vertices in the rooted tree $T$, and let $k$ be the required number of edges in each climbing path.
+
+\begin{itemize}
+    \item \textit{Processing the vertices} -- The outer loop processes every vertex exactly once, in postorder. Hence, it executes $n$ times.
+    \item \textit{Computing $G(v)$} -- For each vertex $v$, the algorithm iterates over all children $u$ of $v$ to compute $G(v)$. Each iteration requires constant time, since it evaluates $\max\{G(u),H(u,k)\}$ and performs an addition.
+\end{itemize}
+
+Let $c(v)$ denote the number of children of vertex $v$. The total time spent computing all values $G(v)$ is therefore
+
+\[
+\sum_{v\in T} O(c(v)).
+\]
+
+In a rooted tree with $n$ vertices, every vertex except the root has exactly one parent. Consequently, the total number of child relationships is $n-1$, so
+
+\[
+\sum_{v\in T}c(v)=n-1.
+\]
+
+It follows that computing all values $G(v)$ takes
+
+\[
+O\left(\sum_{v\in T}c(v)\right)=O(n).
+\]
+
+\begin{itemize}
+    \item \textit{Computing $H(v,d)$} -- For each vertex $v$, the algorithm computes the states $H(v,d)$ for $d=1,\ldots,k$. Thus, there are $k$ iterations of the outer depth loop for each vertex.
+\end{itemize}
+
+\noindent For each pair $(v,d)$, the algorithm iterates over every child $u$ of $v$. Each iteration takes constant time since the value `other' is computed using the already computed value $G(v)$, and the remaining operations involve comparisons, additions, and assignments. The algorithm does not iterate over the other children again to calculate their contribution.\\
+
+Therefore, the total time spent computing all values $H(v,d)$ is
+
+\[
+\begin{aligned}
+\sum_{v\in T}\sum_{d=1}^{k}O(c(v))
+&= O\left(k\sum_{v\in T}c(v)\right)\\
+&= O(k(n-1))\\
+&= O(nk).
+\end{aligned}
+\]
+
+\begin{itemize}
+    \item \textit{Computing the final answer} -- After all states have been computed, the algorithm returns $\max\{G(r),H(r,k)\}$, which requires $O(1)$ time.
+\end{itemize}
+
+Combining all the costs, the total running time is
+
+\[
+\begin{aligned}
+T(n,k)&=O(n)+O(nk)+O(1)\\
+&=O(nk).
+\end{aligned}
+\]
+
+Thus, the time complexity of the algorithm is
+
+\[
+\boxed{O(nk)}.
+\]
+
+\subsection{Space Complexity}
+We now analyze the additional memory required by Algorithm.
+
+\begin{itemize}
+    \item \textit{Dynamic programming tables} -- The algorithm stores one value $G(v)$ for each vertex $v$, requiring $O(n)$ space. It also stores $H(v,d)$ for every vertex $v$ and every $d\in\{0,1,\ldots,k\}$. There are $n(k+1)$ such states, so the space required for this table is \[O(n(k+1))=O(nk)\] for $k\geq 1$.
+    \item \textit{Tree representation} -- The rooted tree can be represented using a list of children for each vertex. Since a tree with $n$ vertices has $n-1$ edges, this representation requires $O(n)$ space.
+    \item \textit{Auxiliary variables} -- The variables used inside the loops, such as `other' and `candidate', require $O(1)$ additional space at any one time. 
+\end{itemize}
+
+The algorithm therefore uses
+
+\[
+\begin{aligned}
+S(n,k)&=O(n)+O(nk)+O(1)\\
+&=O(nk).
+\end{aligned}
+\]
+
+Hence, the space complexity of the dynamic programming tables and tree representation is
+
+\[
+\boxed{O(nk)}.
+\]
+
 \section{Python Code}
 The complete Python code for the algorithm is available in the project repository:
 \begin{center}
     \url{https://github.com/anshulmath/DAA_Project}
 \end{center} 
-
-
-\section{Analysis of Algorithm}
 
 \section{Conclusion}
 

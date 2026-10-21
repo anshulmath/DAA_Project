@@ -3,7 +3,9 @@
 \contentsline {subsection}{\numberline {2.1}Recurrence for $G(v)$}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Recurrence for $H(v, d)$}{2}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Pseudocode}{3}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Python Code}{3}{section.3}%
-\contentsline {section}{\numberline {4}Analysis of Algorithm}{3}{section.4}%
-\contentsline {section}{\numberline {5}Conclusion}{3}{section.5}%
+\contentsline {section}{\numberline {3}Analysis of Algorithm}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Time Complexity}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Space Complexity}{4}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Python Code}{5}{section.4}%
+\contentsline {section}{\numberline {5}Conclusion}{5}{section.5}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
