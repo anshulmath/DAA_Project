@@ -9,13 +9,23 @@
 \usepackage{amsmath,amsthm,amssymb,graphicx,enumitem}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{xcolor}
 \usepackage{etoolbox}
 \usepackage{colortbl}
 \usepackage{float}
 \usepackage{twemojis}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{makecell}
+\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{trees}
 % Include links
 \usepackage[hidelinks]{hyperref}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{collcell}
 
 % 1. Change line numbers to use periods and professional subtle gray
 \algrenewcommand{\alglinenumber}[1]{\footnotesize\color{black!50}#1.}
@@ -125,7 +135,7 @@ Below is the pseudocode for the algorithm.
     \Statex \textbf{ALGORITHM} \textsc{MaximumClimbers}($T, n, k$)
     \Statex \textbf{Input:} Rooted tree $T$ with $n$ vertices, Positive integer $k$
     \Statex \textbf{Output:} Maximum number of vertex-disjoint upward paths of exactly $k$ edges
-    \Statex \rule{\linewidth}{0.5pt} % Sleek separator line beneath your I/O setup
+    \Statex \rule{\linewidth}{0.5pt}
     
     \For{each vertex $v$, in postorder}
         \State $G[v] \gets 0$
@@ -155,7 +165,7 @@ Below is the pseudocode for the algorithm.
         \EndFor
     \EndFor
     
-    \Statex \rule{\linewidth}{0.3pt} % Soft line to separate logic block from the final return
+    \Statex \rule{\linewidth}{0.3pt}
     \State \textbf{return} $\max(G[r], H[r, k])$
 \end{algorithmic}
 \end{algorithm}
@@ -188,40 +198,22 @@ O\left(\sum_{v\in T}c(v)\right)=O(n).
 \]
 
 \begin{itemize}
-    \item \textit{Computing $H(v,d)$} -- For each vertex $v$, the algorithm computes the states $H(v,d)$ for $d=1,\ldots,k$. Thus, there are $k$ iterations of the outer depth loop for each vertex.
+    \item \textit{Computing $H(v,d)$} -- For each vertex $v$, the algorithm computes the states $H(v,d)$ for $d=1,\ldots,k$. Thus, there are $k$ iterations of the outer loop for each vertex.
 \end{itemize}
 
 \noindent For each pair $(v,d)$, the algorithm iterates over every child $u$ of $v$. Each iteration takes constant time since the value `other' is computed using the already computed value $G(v)$, and the remaining operations involve comparisons, additions, and assignments. The algorithm does not iterate over the other children again to calculate their contribution.\\
 
 Therefore, the total time spent computing all values $H(v,d)$ is
 
-\[
-\begin{aligned}
-\sum_{v\in T}\sum_{d=1}^{k}O(c(v))
-&= O\left(k\sum_{v\in T}c(v)\right)\\
-&= O(k(n-1))\\
-&= O(nk).
-\end{aligned}
-\]
+\[\sum_{v\in T}\sum_{d=1}^{k}O(c(v))= O\left(k\sum_{v\in T}c(v)\right)= O(k(n-1))= O(nk).\]
 
 \begin{itemize}
     \item \textit{Computing the final answer} -- After all states have been computed, the algorithm returns $\max\{G(r),H(r,k)\}$, which requires $O(1)$ time.
 \end{itemize}
 
-Combining all the costs, the total running time is
+Combining all the costs, the total running time is \[T(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
 
-\[
-\begin{aligned}
-T(n,k)&=O(n)+O(nk)+O(1)\\
-&=O(nk).
-\end{aligned}
-\]
-
-Thus, the time complexity of the algorithm is
-
-\[
-\boxed{O(nk)}.
-\]
+Thus, the time complexity of the algorithm is $\boxed{O(nk)}.$
 
 \subsection{Space Complexity}
 We now analyze the additional memory required by Algorithm.
@@ -232,25 +224,12 @@ We now analyze the additional memory required by Algorithm.
     \item \textit{Auxiliary variables} -- The variables used inside the loops, such as `other' and `candidate', require $O(1)$ additional space at any one time. 
 \end{itemize}
 
-The algorithm therefore uses
+The algorithm therefore uses \[S(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
 
-\[
-\begin{aligned}
-S(n,k)&=O(n)+O(nk)+O(1)\\
-&=O(nk).
-\end{aligned}
-\]
-
-Hence, the space complexity of the dynamic programming tables and tree representation is
-
-\[
-\boxed{O(nk)}.
-\]
+Hence, the space complexity of the dynamic programming tables and tree representation is \[\boxed{O(nk)}.\]
 
 \section{Proof of Correctness}
-Write the proof of correctness Mrs. Gauri!!! 
-\[\scalebox{5}{\twemoji{brain} + \twemoji{scroll} = \twemoji{link}}\]
-GitHub se pull kar aur fir upload kar.
+Write the proof of correcness here!
 
 \section{Python Code}
 \subsection{GitHub link}
@@ -260,39 +239,177 @@ The complete Python code for the algorithm is available in the project repositor
 \end{center}
 
 \subsection{Test Cases}
+We test the algorithm on trees with different structures,
+including a single vertex, a chain, a star, and a branching
+tree. The expected output is computed manually for each test case. The test cases are summarized in Figure~\ref{fig:test-cases}.
 
-We consider several test cases to verify the correctness of
-the algorithm. Each edge $(u,v)$ indicates that $u$ is the
-parent of $v$, and vertex $0$ is the root. The expected output
-is the maximum number of pairwise vertex-disjoint upward
-paths of exactly $k$ edges.
+\begin{figure}[H]
+\centering
+\begingroup
+\setlength{\tabcolsep}{0pt}
+\renewcommand{\arraystretch}{1}
 
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
+% Custom heading macro with the new light blue-gray color
+\newcommand{\celltitle}[1]{%
+  \colorbox{blue!4!gray!6}{%
+    \parbox[c][0.55cm][c]{\dimexpr\linewidth-2\fboxsep\relax}{\centering\bfseries #1}%
+  }%
+}
+
+\newcommand{\celldiagram}[1]{%
+  \parbox[c][6cm][c]{\linewidth}{%
+    \centering #1%
+  }%
+}
+
+\newcommand{\celldiagramshort}[1]{%
+  \parbox[c][3.5cm][c]{\linewidth}{%
+    \centering #1%
+  }%
+}
+
+% Updated metadata macro using the same light blue-gray color
+\newcommand{\cellinfo}[3]{%
+  \colorbox{blue!4!gray!6}{%
+    \parbox[c][1.05cm][c]{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \centering $n=#1$, $k=#2$\\[3pt] Expected output $=#3$
+    }%
+  }%
+}
+
+% Global style configuration for TikZ
+\tikzset{
+  climber_tree/.style={
+    v/.style={circle,draw,fill=gray!16,minimum size=6.5mm,inner sep=0pt,font=\small},
+    up/.style={-{Stealth[length=1.6mm]}}
+  }
+}
+
+\begin{tabular}{|>{\centering\arraybackslash}p{0.32\textwidth}|
+                >{\centering\arraybackslash}p{0.32\textwidth}|
+                >{\centering\arraybackslash}p{0.32\textwidth}|}
 \hline
-Test & $\#$ vertices $n$ & Path length $k$ &
-Tree edges $T$ & Expected output \\
-\hline
-1 & 1 & 1 & $\varnothing$ & 0 \\
-\hline
-2 & 4 & 2 & $[(0,1),(1,2),(2,3)]$ & 1 \\
-\hline
-3 & 6 & 2 &
-$[(0,1),(1,2),(2,3),(3,4),(4,5)]$ & 2 \\
-\hline
-4 & 4 & 1 &
-$[(0,1),(0,2),(0,3)]$ & 1 \\
-\hline
-5 & 5 & 2 &
-$[(0,1),(0,2),(0,3),(0,4)]$ & 0 \\
-\hline
+% ================= TITLE ROW =================
+\celltitle{Test 1} & \celltitle{Test 2} & \celltitle{Test 3} \\ \arrayrulecolor{black!30}\hline % <-- Fix: \arrayrulecolor must be placed right here
+% ================= DIAGRAM ROW =================
+\celldiagram{
+  \begin{tikzpicture}[climber_tree]
+    \node[v] (a) at (0,-1.35) {$0$};
+  \end{tikzpicture}
+} & \celldiagram{
+  \begin{tikzpicture}[climber_tree]
+    \begin{scope}[yshift=-0.5cm]
+      \node[v] (a) at (0,0) {$0$};
+      \node[v] (b) at (0,-1) {$1$};
+      \node[v] (c) at (0,-2) {$2$};
+      \node[v] (d) at (0,-3) {$3$};
+      \draw[up] (b)--(a); \draw[up] (c)--(b); \draw[up] (d)--(c);
+    \end{scope}
+  \end{tikzpicture}
+} & \celldiagram{
+  \begin{tikzpicture}[climber_tree]
+    \node[v] (a) at (0,0) {$0$};
+    \node[v] (b) at (0,-1) {$1$};
+    \node[v] (c) at (0,-2) {$2$};
+    \node[v] (d) at (0,-3) {$3$};
+    \node[v] (e) at (0,-4) {$4$};
+    \node[v] (f) at (0,-5) {$5$};
+    \draw[up] (b)--(a); \draw[up] (c)--(b); \draw[up] (d)--(c);
+    \draw[up] (e)--(d); \draw[up] (f)--(e);
+  \end{tikzpicture}
+} \\ \arrayrulecolor{black!30}\hline 
+% ================= METADATA ROW =================
+\cellinfo{1}{1}{0} & \cellinfo{4}{2}{1} & \cellinfo{6}{2}{2} \\ \arrayrulecolor{black}\hline 
+% ================= SECOND TITLE ROW =================
+\celltitle{Test 4} & \celltitle{Test 5} & \celltitle{Test 6} \\ \arrayrulecolor{black!30}\hline 
+% ================= SECOND DIAGRAM ROW =================
+\celldiagramshort{
+  \begin{tikzpicture}[climber_tree]
+    \begin{scope}[yshift=-0.9cm]
+      \node[v] (r) at (0,0) {$0$};
+      \node[v] (a) at (-1.0,-1) {$1$};
+      \node[v] (b) at (0,-1) {$2$};
+      \node[v] (c) at (1.0,-1) {$3$};
+      \draw[up] (a)--(r); \draw[up] (b)--(r); \draw[up] (c)--(r);
+    \end{scope}
+  \end{tikzpicture}
+} & \celldiagramshort{
+  \begin{tikzpicture}[climber_tree]
+    \begin{scope}[yshift=-0.9cm]
+      \node[v] (r) at (0,0) {$0$};
+      \node[v] (a) at (-1.35,-1) {$1$};
+      \node[v] (b) at (-0.45,-1) {$2$};
+      \node[v] (c) at (0.45,-1) {$3$};
+      \node[v] (d) at (1.35,-1) {$4$};
+      \draw[up] (a)--(r); \draw[up] (b)--(r); \draw[up] (c)--(r); \draw[up] (d)--(r);
+    \end{scope}
+  \end{tikzpicture}
+} & \celldiagramshort{
+  \begin{tikzpicture}[climber_tree]
+    \begin{scope}[yshift=-0.5cm]
+      \node[v] (r) at (0,0) {$0$};
+      \node[v] (a) at (-1,-1) {$1$};
+      \node[v] (b) at (1,-1) {$2$};
+      \node[v] (c) at (-1.7,-2) {$3$};
+      \node[v] (d) at (-0.5,-2) {$4$};
+      \node[v] (e) at (0.5,-2) {$5$};
+      \node[v] (f) at (1.7,-2) {$6$};
+      \draw[up] (a)--(r); \draw[up] (b)--(r);
+      \draw[up] (c)--(a); \draw[up] (d)--(a);
+      \draw[up] (e)--(b); \draw[up] (f)--(b);
+    \end{scope}
+  \end{tikzpicture}
+} \\ \arrayrulecolor{black!30}\hline 
+% ================= SECOND METADATA ROW =================
+\cellinfo{4}{1}{1} & \cellinfo{5}{2}{0} & \cellinfo{7}{2}{1} \\ \arrayrulecolor{black}\hline
 \end{tabular}
-\end{center}
+\endgroup
+\caption{Test cases for the maximum climbers problem.}
+\label{fig:test-cases}
+\end{figure}
 
-The test cases include a single vertex, a chain, a branching
-tree, and a tree in which no path of the required length
-exists. In particular, Test 4 illustrates that paths sharing
-the root cannot be selected simultaneously.
+
+\noindent
+The following table verifies the Python implementation on all six
+test cases. The computed outputs agree with the expected results. Here we are representing the tree edges as a list of tuples, where each tuple $(u,v)$ represents an edge from vertex $u$ to vertex $v$ in the tree. The vertices are numbered from $0$ to $n-1$, with the root of the tree being vertex $0$.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{6pt}
+
+\rowcolors{2}{white}{blue!2!gray!5}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{
+    >{\centering\arraybackslash}p{0.7cm}
+    >{\centering\arraybackslash}p{2cm}
+    >{\centering\arraybackslash}p{2cm}
+    >{\raggedright\arraybackslash}X
+    >{\centering\arraybackslash}p{3cm}
+}
+\toprule
+\rowcolor{blue!4!gray!6}
+\textbf{Test} &
+\textbf{Vertices $n$} &
+\textbf{Length $k$} &
+\textbf{Tree edges (input)} &
+\textbf{Python output} \\
+\midrule
+1 & 1 & 1 & $\varnothing$ & \textbf{0} \\
+2 & 4 & 2 & $[(0,1), (1,2), (2,3)]$ & \textbf{1} \\
+3 & 6 & 2 & $[(0,1), (1,2), (2,3), (3,4), (4,5)]$ & \textbf{2} \\
+4 & 4 & 1 & $[(0,1), (0,2), (0,3)]$ & \textbf{1} \\
+5 & 5 & 2 & $[(0,1), (0,2), (0,3), (0,4)]$ & \textbf{0} \\
+6 & 7 & 2 & $[(0,1), (0,2), (1,3), (1,4), (2,5), (2,6)]$ & \textbf{1} \\
+\bottomrule
+\end{tabularx}
+\caption{Verification of the test cases using Python.}
+\label{tab:verification}
+\end{table}
+\endgroup
+
 
 \section{Conclusion}
 

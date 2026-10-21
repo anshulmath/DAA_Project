@@ -49,22 +49,23 @@ def MaximumClimbers(T, n, k):
 
     return max(G(0), H(0, k))
 
-#### Test  Cases ####
-tests = [
-        ([], 1, 1, 0),
-        ([(0, 1), (1, 2), (2, 3)], 4, 2, 1),
-        (
-            [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
-            6, 2, 2
-        ),
-        ([(0, 1), (0, 2), (0, 3)], 4, 1, 1),
-        (
-            [(0, 1), (0, 2), (1, 3), (1, 4),
-             (2, 5), (2, 6)],
-            7, 2, 1
-        ),
-        ([(0, 1), (0, 2), (0, 3), (0, 4)], 5, 2, 0),
-    ]
+#### Test Cases ####
 
-for i in range(len(tests)):
-    print(f"Test Case {i+1}: Expected Output: {tests[i][3]}, Actual Output: {MaximumClimbers(tests[i][0], tests[i][1], tests[i][2])}")
+tests = [
+    ([], 1, 1, 0),
+    ([(0, 1), (1, 2), (2, 3)], 4, 2, 1),
+    ([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)], 6, 2, 2),
+    ([(0, 1), (0, 2), (0, 3)], 4, 1, 1),
+    ([(0, 1), (0, 2), (0, 3), (0, 4)], 5, 2, 0),
+    (
+        [(0, 1), (0, 2), (1, 3), (1, 4), (2, 5), (2, 6)],
+        7, 2, 1
+    )
+]
+
+for i, (T, n, k, expected) in enumerate(tests, start=1):
+    actual = MaximumClimbers(T, n, k)
+    print(
+        f"Test Case {i}: Expected Output: {expected}, "
+        f"Actual Output: {actual}"
+    )
