@@ -7,9 +7,11 @@ def MaximumClimbers(T, n, k):
 
     temp = -67
 
+    # Storing computed values of G(v) and H(v, d)
     g = {}
     h = {}
 
+    # Computing G(v)
     def G(v):
         if v in g:
             return g[v]
@@ -21,6 +23,7 @@ def MaximumClimbers(T, n, k):
         g[v] = count
         return count
 
+    # Computing H(v, d)
     def H(v, d):
         if v in h:
             return h[(v, d)]
