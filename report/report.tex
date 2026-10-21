@@ -115,7 +115,7 @@ Let $u_1, \ldots, u_m$ be the children of $v$. For every $1\leq j\leq m$, the ma
 \subsection{Recurrence for $H(v, d)$}
 For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path goes through $u$. Then, the maximum number of $k$-length paths that can be chosen in the subtree, keeping $u$ fixed, is \[H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}.\]Therefore, we have the following recurrence \[H(v, d) = \max_{u \text{ child of } v} \left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right)\] for $1\leq d < k$.
 
-When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
+When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, k-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
 
 \subsection{Pseudocode}
 Below is the pseudocode for the algorithm. 

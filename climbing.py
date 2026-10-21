@@ -33,8 +33,8 @@ def MaximumClimbers(T, n, k):
         total = G(v)
 
         for u in children[v]:
-            other_children = total - max(G(u), H(u, k))
-            max_value = H(u, d-1) + other_children
+            other = total - max(G(u), H(u, k))
+            max_value = H(u, d-1) + other
 
             if d == k:
                 max_value += 1
@@ -49,6 +49,22 @@ def MaximumClimbers(T, n, k):
 
     return max(G(0), H(0, k))
 
-# Test cases
-print(MaximumClimbers([(0, 1), (1, 2), (2, 3)], 4, 2))  # Expected output: `1`
-print(MaximumClimbers([(0, 1), (0, 2), (0, 3)], 4, 1))  # Expected output: `1`
+#### Test  Cases ####
+tests = [
+        ([], 1, 1, 0),
+        ([(0, 1), (1, 2), (2, 3)], 4, 2, 1),
+        (
+            [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
+            6, 2, 2
+        ),
+        ([(0, 1), (0, 2), (0, 3)], 4, 1, 1),
+        (
+            [(0, 1), (0, 2), (1, 3), (1, 4),
+             (2, 5), (2, 6)],
+            7, 2, 1
+        ),
+        ([(0, 1), (0, 2), (0, 3), (0, 4)], 5, 2, 0),
+    ]
+
+for i in range(len(tests)):
+    print(f"Test Case {i+1}: Expected Output: {tests[i][3]}, Actual Output: {MaximumClimbers(tests[i][0], tests[i][1], tests[i][2])}")
