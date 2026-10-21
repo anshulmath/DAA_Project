@@ -254,10 +254,46 @@ GitHub se pull kar aur fir upload kar.
 
 
 \section{Python Code}
+\subsection{GitHub link}
 The complete Python code for the algorithm is available in the project repository:
 \begin{center}
     \url{https://github.com/anshulmath/DAA_Project}
-\end{center} 
+\end{center}
+
+\subsection{Test Cases}
+
+We consider several test cases to verify the correctness of
+the algorithm. Each edge $(u,v)$ indicates that $u$ is the
+parent of $v$, and vertex $0$ is the root. The expected output
+is the maximum number of pairwise vertex-disjoint upward
+paths of exactly $k$ edges.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Test & $\#$ vertices $n$ & Path length $k$ &
+Tree edges $T$ & Expected output \\
+\hline
+1 & 1 & 1 & $\varnothing$ & 0 \\
+\hline
+2 & 4 & 2 & $[(0,1),(1,2),(2,3)]$ & 1 \\
+\hline
+3 & 6 & 2 &
+$[(0,1),(1,2),(2,3),(3,4),(4,5)]$ & 2 \\
+\hline
+4 & 4 & 1 &
+$[(0,1),(0,2),(0,3)]$ & 1 \\
+\hline
+5 & 5 & 2 &
+$[(0,1),(0,2),(0,3),(0,4)]$ & 0 \\
+\hline
+\end{tabular}
+\end{center}
+
+The test cases include a single vertex, a chain, a branching
+tree, and a tree in which no path of the required length
+exists. In particular, Test 4 illustrates that paths sharing
+the root cannot be selected simultaneously.
 
 \section{Conclusion}
 
