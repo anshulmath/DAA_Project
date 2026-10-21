@@ -1,0 +1,108 @@
+\documentclass[11pt]{scrartcl}
+
+%%%%%%%%%%%%%% LATEX SAMPLE FILE %%%%%%%%%%%%%%%%
+% A line which starts with a % sign
+% is called a COMMENT. It is IGNORED
+% by the LaTeX processor.
+
+% Include math
+\usepackage{amsmath,amsthm,amssymb,graphicx,enumitem}
+% Include links
+\usepackage[hidelinks]{hyperref}
+
+%%%%%%%%%%%%%  THEOREMS  %%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% Problem command
+\newcounter{problem}
+\newcommand{\problem}[2]{%
+    \refstepcounter{problem}%
+    \noindent\textbf{\href{#1}{Problem~\theproblem.}}#2%
+    \vspace{0.3cm}\par%
+}
+
+% Solution command
+\newcounter{solution}
+\newcommand{\solution}[1]{%
+    \refstepcounter{solution}%
+    \noindent\textbf{Solution.~}#1%
+    \vspace{0.3cm}\par%
+}
+
+% Solution command that is used when there are more than one solutions.
+\newcounter{numsolution}
+\newcommand{\numsolution}[2]{%
+    \refstepcounter{numsolution}%
+    \noindent\textbf{Solution~#1.~}#2%
+    \vspace{0.3cm}\par%
+}
+
+\renewcommand{\mod}{\text{mod }}
+\newcommand\cycle[2][\,]{%
+\readlist\thecycle{#2}%
+(\foreachitem\i\in	hecycle{\ifnum\icnt=1\else#1\fi\i})%
+}
+
+%%%%%%%%%%%%%%  PAGE SETUP %%%%%%%%%%%%%%%%
+\usepackage[top=1in,left=1in,right=1in,bottom=1.5in]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{DAA Project}
+\rhead{\thepage}
+\cfoot{}
+
+%%%%%%%%%%%%% SHORTCUTS %%%%%%%%%%%%%%%%%%%%
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\cbrt}[1]{\sqrt[3]{#1}}
+
+\begin{document}
+\title{Design and Analysis of Algorithms Project Report}
+\author{Anshul Raj Singh, Gauransh Kapur}
+\date{\today}
+\maketitle
+
+\tableofcontents
+
+\section{Problem statement and test cases}
+One day, Alex got tired of climbing in a gym and decided to take a very large group of climbing friends outside to climb. The climbing area where they went, had a huge wide boulder, not very tall, with various marked hand and foot holds. Alex quickly determined an ``allowed" set of moves that her group of friends can perform to get from one hold to another. The overall system of holds can be described by a rooted tree
+$T$ with $n$ vertices, where each vertex corresponds to a hold and each edge corresponds to an allowed move between holds. The climbing paths converge as they go up the boulder, leading to a unique hold at the summit, represented by the root of $T$. Alex and her friends (who are all excellent climbers) decided to play a game, where as many climbers
+as possible are simultaneously on the boulder and each climber needs to perform a sequence of exactly $k$ moves. Each climber can choose an arbitrary hold to start from, and all moves must move away from the ground. Thus, each climber traces out a path of $k$ edges in the tree $T$, all directed toward the root. However, no two climbers are allowed to
+touch the same hold; the paths followed by different climbers cannot intersect at all. 
+
+Describe and analyze an efficient dynamic programming algorithm to compute the maximum number of climbers that can play this game.
+
+
+
+
+\section{Solution}
+Let $r$ be the root of the tree $T$. We define two quantities for each vertex $v$ in $T$.\\
+\begin{itemize}
+    \item Let $G(v)$ be the maximum number of $k$-length paths that can be chosen in the subtree rooted at $v$ not containing $v$.
+    \item Let $H(v, d)$ be the maximum number of $k$-length paths that can be chosen in the subtree rooted at $v$ subject to the restriction that there is a path (call it \textbf{distinguished}) at depth $d$ containing $v$ for $1\leq d\leq k$
+\end{itemize}Then the required answer is \[\max\{G(r), H(r, k)\}.\]
+So we need to compute $G(v)$ and $H(v, d)$ for all vertices $v$ in $T$ and for all $1\leq d\leq k$. We proceed via recursion.\\
+
+\subsection{Recurrence for $G(v)$}
+Let $u_1, \ldots, u_m$ be the children of $v$. For every $1\leq j\leq m$, the maximum number of $k$-length paths that end at $u_j$ is $\max\{G(u_j), H(u_j, k)\}$. Thus, \[G(v) = \sum_{j=1}^m \max\{G(u_j), H(u_j, k)\}.\]
+
+\subsection{Recurrence for $H(v, d)$}
+For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path goes through $u$. Then, the maximum number of $k$-length paths that can be chosen in the subtree, keeping $u$ fixed, is \[H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}.\]Therefore, we have the following recurrence \[H(v, d) = \max_{u \text{ child of } v} \left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right)\] for $1\leq d < k$.
+
+When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
+
+\section{Python Code}
+
+
+
+\section{Analysis of Algorithm}
+
+\section{Conclusion}
+
+\end{document}
