@@ -50,4 +50,5 @@ def code(T, n, k):
     return max(G(0), H(0, k))
 
 # Test cases
+print(code([(0, 1), (1, 2), (2, 3)], 4, 2))  # Expected output: 4
 print(code([(0, 1), (0, 2), (0, 3)], 4, 1))
