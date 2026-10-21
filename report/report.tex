@@ -239,6 +239,18 @@ The complete Python code for the algorithm is available in the project repositor
 \end{center}
 
 \subsection{Test Cases}
+\textbf{Input Format and Execution} The algorithm is implemented in Python. The input tree is represented by a list of edges, where each edge \((u,v)\) indicates that \(u\) is the parent of \(v\). The vertices are labelled using integers from \(0\) to \(n-1\), with vertex \(0\) designated as the root. The input also specifies the number of vertices \(n\) and the required path length \(k\).
+
+\noindent For example, consider the tree with edges
+\[
+T = [(0,1),(0,2),(1,3),(1,4),(2,5),(2,6)].
+\]
+This represents a rooted tree with seven vertices and root \(0\) (Figure~\ref{fig:test-cases}, Test 6).
+
+To execute the algorithm, provide the edge list, the number of vertices, and the required path length to the function `MaximumClimbers(T, n, k)`. For the example above, taking \(k=2\), the function returns \(1\), which is the maximum number of pairwise vertex-disjoint upward paths of exactly two edges.
+
+The program can be executed using Python 3. The source code and test cases are provided with the project files.
+
 We test the algorithm on trees with different structures,
 including a single vertex, a chain, a star, and a branching
 tree. The expected output is computed manually for each test case. The test cases are summarized in Figure~\ref{fig:test-cases}.
