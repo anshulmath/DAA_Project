@@ -1,11 +1,11 @@
-def code(T, n, k):
+def MaximumClimbers(T, n, k):
     children = {v : [] for v in range(n)}
 
     # Storing children of each node
     for u, v in T:
         children[u].append(v)
 
-    temp = -67777777777
+    temp = -67
 
     g = {}
     h = {}
@@ -50,5 +50,5 @@ def code(T, n, k):
     return max(G(0), H(0, k))
 
 # Test cases
-print(code([(0, 1), (1, 2), (2, 3)], 4, 2))  # Expected output: `1`
-print(code([(0, 1), (0, 2), (0, 3)], 4, 1))  # Expected output: `1`
+print(MaximumClimbers([(0, 1), (1, 2), (2, 3)], 4, 2))  # Expected output: `1`
+print(MaximumClimbers([(0, 1), (0, 2), (0, 3)], 4, 1))  # Expected output: `1`

@@ -7,8 +7,27 @@
 
 % Include math
 \usepackage{amsmath,amsthm,amssymb,graphicx,enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{colortbl}
 % Include links
 \usepackage[hidelinks]{hyperref}
+
+% 1. Change line numbers to use periods and professional subtle gray
+\algrenewcommand{\alglinenumber}[1]{\footnotesize\color{black!50}#1.}
+
+% 2. Custom Indent Guide Lines (Draws vertical tracking lines for loops)
+\makeatletter
+\definecolor{linegray}{HTML}{E2E8F0} % Soft boundary line color
+\newcommand{\algorithmicline}{\color{linegray}\vrule height \baselineskip depth 0px width 0.5pt\hspace{0.5em}}
+\newcommand{\LState}{\State\hspace{-0.5em}\algorithmicline}
+
+% Override default indentation blocks to render lines cleanly
+\def\algbackskip{\hskip-\ALG@thistlm}
+\def\LState{\State}
+\makeatother
 
 %%%%%%%%%%%%%  THEOREMS  %%%%%%%%%%%%%%%%
 \theoremstyle{plain}
@@ -78,14 +97,13 @@ touch the same hold; the paths followed by different climbers cannot intersect a
 
 Describe and analyze an efficient dynamic programming algorithm to compute the maximum number of climbers that can play this game.
 
-
-
-
 \section{Solution}
 Let $r$ be the root of the tree $T$. We define two quantities for each vertex $v$ in $T$.\\
 \begin{itemize}
-    \item Let $G(v)$ be the maximum number of $k$-length paths that can be chosen in the subtree rooted at $v$ not containing $v$.
-    \item Let $H(v, d)$ be the maximum number of $k$-length paths that can be chosen in the subtree rooted at $v$ subject to the restriction that there is a path (call it \textbf{distinguished}) at depth $d$ containing $v$ for $1\leq d\leq k$
+    \item $G(v)$ -- maximum number of paths contained in the subtree rooted at \(v\), with \(v\) unused.
+    \item $H(v,d)$ -- maximum number of paths in the subtree, subject to a distinguished path that starts \(d\) edges below \(v\) and travels upward through \(v\). When \(d=k\), the distinguished path ends at \(v\) and counts as one complete path.
+    \item $H(v,0)=G(v)$ -- the distinguished path starts at $v$, but has not yet been completed within the subtree.
+    \item An impossible state has value $-\infty$.
 \end{itemize}Then the required answer is \[\max\{G(r), H(r, k)\}.\]
 So we need to compute $G(v)$ and $H(v, d)$ for all vertices $v$ in $T$ and for all $1\leq d\leq k$. We proceed via recursion.\\
 
@@ -97,8 +115,53 @@ For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path
 
 When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
 
-\section{Python Code}
+\subsection{Pseudocode}
+\begin{algorithm}[t]
+\caption{\textbf{Maximum Climbers Calculation}}\label{alg:max_climbers}
+\begin{algorithmic}
+    \Statex \textbf{ALGORITHM} \textsc{MaximumClimbers}($T, r, k$)
+    \Statex \textbf{Input:} Rooted tree $T$ with root $r$, Positive integer $k$
+    \Statex \textbf{Output:} Maximum number of vertex-disjoint upward paths of exactly $k$ edges
+    \Statex \rule{\linewidth}{0.5pt} % Sleek separator line beneath your I/O setup
+    
+    \For{each vertex $v$, in postorder}
+        \State $G[v] \gets 0$
+        
+        \For{each child $u$ of $v$}
+            \State $G[v] \gets G[v] + \max(G[u], H[u, k])$
+        \EndFor
+        
+        \State $H[v, 0] \gets G[v]$
+        
+        \For{$d \gets 1$ \textbf{to} $k$}
+            \State $H[v, d] \gets -\infty$
+            
+            \For{each child $u$ of $v$}
+                \State $\mathit{other} \gets G[v] - \max(G[u], H[u, k])$
+                
+                \If{$H[u, d-1] \neq -\infty$}
+                    \State $\mathit{candidate} \gets H[u, d-1] + \mathit{other}$
+                    
+                    \If{$d = k$}
+                        \State $\mathit{candidate} \gets \mathit{candidate} + 1$
+                    \EndIf
+                    
+                    \State $H[v, d] \gets \max(H[v, d], \mathit{candidate})$
+                \EndIf
+            \EndFor
+        \EndFor
+    \EndFor
+    
+    \Statex \rule{\linewidth}{0.3pt} % Soft line to separate logic block from the final return
+    \State \textbf{return} $\max(G[r], H[r, k])$
+\end{algorithmic}
+\end{algorithm}
 
+\section{Python Code}
+The complete Python code for the algorithm is available in the project repository:
+\begin{center}
+    \url{https://github.com/anshulmath/DAA_Project}
+\end{center} 
 
 
 \section{Analysis of Algorithm}
