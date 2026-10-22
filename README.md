@@ -44,9 +44,9 @@ The following six test cases are included in `climbing.py`:
    python3 climbing.py
    ```
 
-The file includes test cases that can be used to check the implementation.
+The file includes the test cases and runs the algorithm on each one. For every test case, the program prints the expected output alongside the actual output.
 
-It should give the following output:
+## Expected Output
    ```Test Case 1: Expected Output: 0, Actual Output: 0
    Test Case 2: Expected Output: 1, Actual Output: 1
    Test Case 3: Expected Output: 2, Actual Output: 2
