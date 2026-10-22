@@ -15,8 +15,18 @@ The algorithm accepts:
 
 Vertex `0` is the root.
 
-The following test cases are given in the code:
-   ```h```
+For example, `T = [(0, 1), (1, 2), (2, 3)]` is the linear tree with `0` as the root and `3` as the leaf node, `n = 4`.
+
+The following six test cases are included in `climbing.py`:
+
+| Test Case | Number of vertices (`n`) | Path length (`k`) | Expected output |
+|---|---:|---:|---:|
+| 1 | 1 | 1 | 0 |
+| 2 | 4 | 2 | 1 |
+| 3 | 6 | 2 | 2 |
+| 4 | 4 | 1 | 1 |
+| 5 | 5 | 2 | 0 |
+| 6 | 7 | 2 | 1 |
 
 ## How to Run
 
@@ -31,8 +41,7 @@ The following test cases are given in the code:
 The file includes test cases that can be used to check the implementation.
 
 It should give the following output:
-   ```## OUTPUT:
-   Test Case 1: Expected Output: 0, Actual Output: 0
+   ```Test Case 1: Expected Output: 0, Actual Output: 0
    Test Case 2: Expected Output: 1, Actual Output: 1
    Test Case 3: Expected Output: 2, Actual Output: 2
    Test Case 4: Expected Output: 1, Actual Output: 1
