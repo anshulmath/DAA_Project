@@ -422,7 +422,16 @@ test cases. The computed outputs agree with the expected results. Here we are re
 \end{table}
 \endgroup
 
-
 \section{Summary}
-
+Through this problem, we have seen how dynamic programming on a graph can help find the maximum number of pairwise vertex-disjoint upward
+paths involving exactly $k$ edges in a rooted tree $T$ with $n$ vertices. To this end, we introduced $2$ DP states
+\begin{itemize}
+  \item $G(v)$ -- maximum number of paths contained in the subtree rooted at \(v\), with \(v\) unused.
+  \item $H(v,d)$ -- maximum number of paths in the subtree, subject to a distinguished path that starts \(d\) edges below \(v\) and travels upward through \(v\). When \(d=k\), the distinguished path ends at \(v\) and counts as one complete path.
+\end{itemize}We then derived the recurrence relations for these states and implemented a dynamic programming algorithm to compute them. We got the following time and space complexity for the algorithm:
+\begin{itemize}
+    \item Time complexity: $O(nk)$
+    \item Space complexity: $O(nk)$
+\end{itemize}
+\textbf{NOTE:} The these complexities are the complexities of the dynamic programming algorithm. The overall complexity of the algorithm will also include the time taken to read the input and construct the tree, which depends on the input format and is not included in the above analysis.
 \end{document}
