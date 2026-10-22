@@ -38,6 +38,12 @@ The following six test cases are included in `climbing.py`:
    python climbing.py
    ```
 
+   If your system uses `python3` to run Python 3, use:
+
+   ```bash
+   python3 climbing.py
+   ```
+
 The file includes test cases that can be used to check the implementation.
 
 It should give the following output:
