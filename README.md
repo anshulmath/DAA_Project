@@ -18,7 +18,11 @@ The algorithm accepts:
 
 Vertex `0` is the root.
 
+The function `MaximumClimbers(T, n, k)` returns the maximum number of vertex-disjoint `k`-paths in `T`.
+
 For example, `T = [(0, 1), (1, 2), (2, 3)]` is the linear tree with `0` as the root and `3` as the leaf node, `n = 4`.
+
+Then the output for `MaximumClimbers(T, 4, 2)` should be `1`.
 
 The following six test cases are included in `climbing.py`:
 
