@@ -31,7 +31,8 @@ The following test cases are given in the code:
 The file includes test cases that can be used to check the implementation.
 
 It should give the following output:
-   ```Test Case 1: Expected Output: 0, Actual Output: 0
+   ```## OUTPUT:
+   Test Case 1: Expected Output: 0, Actual Output: 0
    Test Case 2: Expected Output: 1, Actual Output: 1
    Test Case 3: Expected Output: 2, Actual Output: 2
    Test Case 4: Expected Output: 1, Actual Output: 1
