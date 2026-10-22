@@ -1,5 +1,8 @@
 # Maximum Vertex-Disjoint Climbing Paths
 
+## Authors: Anshul Raj Singh, Gauransh Kapur
+## Institution: Indian Statistical Institute, Bangalore
+
 ## Description
 
 This project solves the problem of finding the maximum number of pairwise vertex-disjoint upward paths of exactly $k$ edges in a rooted tree.
@@ -54,10 +57,3 @@ The file includes the test cases and runs the algorithm on each one. For every t
    Test Case 5: Expected Output: 0, Actual Output: 0
    Test Case 6: Expected Output: 1, Actual Output: 1
    ```
-
-## Authors
-
-Anshul Raj Singh and Gauransh Kapur
-
-## Institution
-Indian Statistical Institute, Bangalore
