@@ -1,6 +1,7 @@
 # Maximum Vertex-Disjoint Climbing Paths
 
 **Authors:** Anshul Raj Singh, Gauransh Kapur
+
 **Institution:** Indian Statistical Institute, Bangalore
 
 ## Description
