@@ -229,7 +229,10 @@ The algorithm therefore uses \[S(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
 Hence, the space complexity of the dynamic programming tables and tree representation is \[\boxed{O(nk)}.\]
 
 \section{Proof of Correctness}
-Write the proof of correcness here!
+We prove correctness by induction on height of the subtree. Let $T_v$ be the subtree rooted at $v$ and  $M(v)=\max\{G(v),H(v,k)\}$. Note that a path avoiding $v$ must lie entirely inside $T_u$ for some child $u$ of $v$. Paths in different child subtrees share no vertex, so collections chosen separately in different child subtrees can always be combined.\\\\
+We claim that the maximum size of a collection in $T_v$ in $M(v)$. If $v$ is unused, the size is atmost $G(v)$ by definition. If $v$ is used, then $v$ is the top of the path. In this case, the size is atmost $H(v,d)$ by definition. Note that these are attained by definition, thus $M(v)$ is the maximum size of a valid collection in $T_v$.\\
+The recurrences are correct. This can be checked by induction assuming that the recurrence gives correct values for all children of a vertex. From here, it is also clear that the algorithm computes the correct values.\\
+As $T=T_r$, the maximum number of vertex disjoint upward paths of exactly $k$ edges in $T$ is $M(r)=\max\{G(v),H(v,k)\}$. As before, both of these are attained by definition and hence the algorithm returns the correct value
 
 \section{Python Code}
 \subsection{GitHub link}
