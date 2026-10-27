@@ -1,10 +1,5 @@
 \documentclass[11pt]{scrartcl}
 
-%%%%%%%%%%%%%% LATEX SAMPLE FILE %%%%%%%%%%%%%%%%
-% A line which starts with a % sign
-% is called a COMMENT. It is IGNORED
-% by the LaTeX processor.
-
 % Include math
 \usepackage{amsmath,amsthm,amssymb,graphicx,enumitem}
 \usepackage{algorithm}
@@ -17,6 +12,7 @@
 \usepackage{tikz}
 \usepackage{array}
 \usepackage{makecell}
+\usepackage{fourier-orns}
 \usetikzlibrary{arrows.meta,positioning}
 \usetikzlibrary{trees}
 % Include links
@@ -85,7 +81,7 @@
 \usepackage[top=1in,left=1in,right=1in,bottom=1.5in]{geometry}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{Maximum Number of Climbers -- DAA Project}
+\lhead{Maximum Number of Climbers -- DAA Project 2026-27}
 \rhead{\thepage}
 \cfoot{}
 
@@ -101,163 +97,17 @@
 
 \tableofcontents
 
-\section{Problem statement and test cases}
+\section{Problem Statement}
 One day, Alex got tired of climbing in a gym and decided to take a very large group of climbing friends outside to climb. The climbing area where they went, had a huge wide boulder, not very tall, with various marked hand and foot holds. Alex quickly determined an ``allowed" set of moves that her group of friends can perform to get from one hold to another. The overall system of holds can be described by a rooted tree
 $T$ with $n$ vertices, where each vertex corresponds to a hold and each edge corresponds to an allowed move between holds. The climbing paths converge as they go up the boulder, leading to a unique hold at the summit, represented by the root of $T$. Alex and her friends (who are all excellent climbers) decided to play a game, where as many climbers
 as possible are simultaneously on the boulder and each climber needs to perform a sequence of exactly $k$ moves. Each climber can choose an arbitrary hold to start from, and all moves must move away from the ground. Thus, each climber traces out a path of $k$ edges in the tree $T$, all directed toward the root. However, no two climbers are allowed to
 touch the same hold; the paths followed by different climbers cannot intersect at all. 
 
-Describe and analyze an efficient dynamic programming algorithm to compute the maximum number of climbers that can play this game.
+Describe and analyze an efficient dynamic programming algorithm to compute the maximum number of climbers that can play this game.\\\\
+This problem is equivalent to finding the maximum number of pairwise vertex-disjoint upward paths involving exactly $k$ edges in a rooted tree $T$ with $n$ vertices.
 
-\section{Solution}
-Let $r$ be the root of the tree $T$. We define two quantities for each vertex $v$ in $T$.\\
-\begin{itemize}
-    \item $G(v)$ -- maximum number of paths contained in the subtree rooted at \(v\), with \(v\) unused.
-    \item $H(v,d)$ -- maximum number of paths in the subtree, subject to a distinguished path that starts \(d\) edges below \(v\) and travels upward through \(v\). When \(d=k\), the distinguished path ends at \(v\) and counts as one complete path.
-    \item $H(v,0)=G(v)$ -- the distinguished path starts at $v$, but has not yet been completed within the subtree.
-    \item An impossible state has value $-\infty$.
-\end{itemize}Then the required answer is \[\max\{G(r), H(r, k)\}.\]
-So we need to compute $G(v)$ and $H(v, d)$ for all vertices $v$ in $T$ and for all $1\leq d\leq k$. We proceed via recursion.\\
-
-\subsection{Recurrence for $G(v)$}
-Let $u_1, \ldots, u_m$ be the children of $v$. For every $1\leq j\leq m$, the maximum number of $k$-length paths that end at $u_j$ is $\max\{G(u_j), H(u_j, k)\}$. Thus, \[G(v) = \sum_{j=1}^m \max\{G(u_j), H(u_j, k)\}.\]
-
-\subsection{Recurrence for $H(v, d)$}
-For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path goes through $u$. Then, the maximum number of $k$-length paths that can be chosen in the subtree, keeping $u$ fixed, is \[H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}.\]Therefore, we have the following recurrence \[H(v, d) = \max_{u \text{ child of } v} \left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right)\] for $1\leq d < k$.
-
-When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, k-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]So, our final answer is $$\max\{G(r), H(r, k)\}.$$
-
-\subsection{Pseudocode}
-Below is the pseudocode for the algorithm. 
-\begin{algorithm}[H]
-\caption{\textbf{Maximum Number of Climbers Calculation}}\label{alg:max_climbers}
-\begin{algorithmic}
-    \Statex \textbf{ALGORITHM} \textsc{MaximumClimbers}($T, n, k$)
-    \Statex \textbf{Input:} Rooted tree $T$ with $n$ vertices, Positive integer $k$
-    \Statex \textbf{Output:} Maximum number of vertex-disjoint upward paths of exactly $k$ edges
-    \Statex \rule{\linewidth}{0.5pt}
-    
-    \For{each vertex $v$, in postorder}
-        \State $G[v] \gets 0$
-        
-        \For{each child $u$ of $v$}
-            \State $G[v] \gets G[v] + \max(G[u], H[u, k])$
-        \EndFor
-        
-        \State $H[v, 0] \gets G[v]$
-        
-        \For{$d \gets 1$ \textbf{to} $k$}
-            \State $H[v, d] \gets -\infty$
-            
-            \For{each child $u$ of $v$}
-                \State $\mathit{other} \gets G[v] - \max(G[u], H[u, k])$
-                
-                \If{$H[u, d-1] \neq -\infty$}
-                    \State $\mathit{candidate} \gets H[u, d-1] + \mathit{other}$
-                    
-                    \If{$d = k$}
-                        \State $\mathit{candidate} \gets \mathit{candidate} + 1$
-                    \EndIf
-                    
-                    \State $H[v, d] \gets \max(H[v, d], \mathit{candidate})$
-                \EndIf
-            \EndFor
-        \EndFor
-    \EndFor
-    
-    \Statex \rule{\linewidth}{0.3pt}
-    \State \textbf{return} $\max(G[r], H[r, k])$
-\end{algorithmic}
-\end{algorithm}
-
-\section{Analysis of Algorithm}
-\subsection{Time Complexity}
-Let $n$ be the number of vertices in the rooted tree $T$, and let $k$ be the required number of edges in each climbing path.
-
-\begin{itemize}
-    \item \textit{Processing the vertices} -- The outer loop processes every vertex exactly once, in postorder. Hence, it executes $n$ times.
-    \item \textit{Computing $G(v)$} -- For each vertex $v$, the algorithm iterates over all children $u$ of $v$ to compute $G(v)$. Each iteration requires constant time, since it evaluates $\max\{G(u),H(u,k)\}$ and performs an addition.
-\end{itemize}
-
-Let $c(v)$ denote the number of children of vertex $v$. The total time spent computing all values $G(v)$ is therefore
-
-\[
-\sum_{v\in T} O(c(v)).
-\]
-
-In a rooted tree with $n$ vertices, every vertex except the root has exactly one parent. Consequently, the total number of child relationships is $n-1$, so
-
-\[
-\sum_{v\in T}c(v)=n-1.
-\]
-
-It follows that computing all values $G(v)$ takes
-
-\[
-O\left(\sum_{v\in T}c(v)\right)=O(n).
-\]
-
-\begin{itemize}
-    \item \textit{Computing $H(v,d)$} -- For each vertex $v$, the algorithm computes the states $H(v,d)$ for $d=1,\ldots,k$. Thus, there are $k$ iterations of the outer loop for each vertex.
-\end{itemize}
-
-\noindent For each pair $(v,d)$, the algorithm iterates over every child $u$ of $v$. Each iteration takes constant time since the value `other' is computed using the already computed value $G(v)$, and the remaining operations involve comparisons, additions, and assignments. The algorithm does not iterate over the other children again to calculate their contribution.\\
-
-Therefore, the total time spent computing all values $H(v,d)$ is
-
-\[\sum_{v\in T}\sum_{d=1}^{k}O(c(v))= O\left(k\sum_{v\in T}c(v)\right)= O(k(n-1))= O(nk).\]
-
-\begin{itemize}
-    \item \textit{Computing the final answer} -- After all states have been computed, the algorithm returns $\max\{G(r),H(r,k)\}$, which requires $O(1)$ time.
-\end{itemize}
-
-Combining all the costs, the total running time is \[T(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
-
-Thus, the time complexity of the algorithm is $\boxed{O(nk)}.$
-
-\subsection{Space Complexity}
-We now analyze the additional memory required by Algorithm.
-
-\begin{itemize}
-    \item \textit{Dynamic programming tables} -- The algorithm stores one value $G(v)$ for each vertex $v$, requiring $O(n)$ space. It also stores $H(v,d)$ for every vertex $v$ and every $d\in\{0,1,\ldots,k\}$. There are $n(k+1)$ such states, so the space required for this table is \[O(n(k+1))=O(nk)\] for $k\geq 1$.
-    \item \textit{Tree representation} -- The rooted tree can be represented using a list of children for each vertex. Since a tree with $n$ vertices has $n-1$ edges, this representation requires $O(n)$ space.
-    \item \textit{Auxiliary variables} -- The variables used inside the loops, such as `other' and `candidate', require $O(1)$ additional space at any one time. 
-\end{itemize}
-
-The algorithm therefore uses \[S(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
-
-Hence, the space complexity of the dynamic programming tables and tree representation is \[\boxed{O(nk)}.\]
-
-\section{Proof of Correctness}
-We prove correctness by induction on height of the subtree. Let $T_v$ be the subtree rooted at $v$ and  $M(v)=\max\{G(v),H(v,k)\}$. Note that a path avoiding $v$ must lie entirely inside $T_u$ for some child $u$ of $v$. Paths in different child subtrees share no vertex, so collections chosen separately in different child subtrees can always be combined.\\\\
-We claim that the maximum size of a collection in $T_v$ in $M(v)$. If $v$ is unused, the size is atmost $G(v)$ by definition. If $v$ is used, then $v$ is the top of the path. In this case, the size is atmost $H(v,d)$ by definition. Note that these are attained by definition, thus $M(v)$ is the maximum size of a valid collection in $T_v$.\\
-The recurrences are correct. This can be checked by induction assuming that the recurrence gives correct values for all children of a vertex. From here, it is also clear that the algorithm computes the correct values.\\
-As $T=T_r$, the maximum number of vertex disjoint upward paths of exactly $k$ edges in $T$ is $M(r)=\max\{G(v),H(v,k)\}$. As before, both of these are attained by definition and hence the algorithm returns the correct value
-
-\section{Python Code}
-\subsection{GitHub link}
-The complete Python code for the algorithm is available in the project repository:
-\begin{center}
-    \url{https://github.com/anshulmath/DAA_Project}
-\end{center}
-
-\subsection{Test Cases}
-\textbf{Input Format and Execution} The algorithm is implemented in Python. The input tree is represented by a list of edges, where each edge \((u,v)\) indicates that \(u\) is the parent of \(v\). The vertices are labelled using integers from \(0\) to \(n-1\), with vertex \(0\) designated as the root. The input also specifies the number of vertices \(n\) and the required path length \(k\).
-
-\noindent For example, consider the tree with edges
-\[
-T = [(0,1),(0,2),(1,3),(1,4),(2,5),(2,6)].
-\]
-This represents a rooted tree with seven vertices and root \(0\) (Figure~\ref{fig:test-cases}, Test 6).
-
-To execute the algorithm, provide the edge list, the number of vertices, and the required path length to the function `MaximumClimbers(T, n, k)`. For the example above, taking \(k=2\), the function returns \(1\), which is the maximum number of pairwise vertex-disjoint upward paths of exactly two edges.
-
-The program can be executed using Python 3. The source code and test cases are provided with the project files.
-
-We test the algorithm on trees with different structures,
-including a single vertex, a chain, a star, and a branching
-tree. The expected output is computed manually for each test case. The test cases are summarized in Figure~\ref{fig:test-cases}.
-
+\subsection{Some Examples}
+Below are six test cases for the problem. The expected output is computed manually for each test case. The test cases are summarized in Figure~\ref{fig:test-cases}.
 \begin{figure}[H]
 \centering
 \begingroup
@@ -383,6 +233,168 @@ tree. The expected output is computed manually for each test case. The test case
 \label{fig:test-cases}
 \end{figure}
 
+\section{Solution}
+Let $r$ be the root of the tree $T$. We define two quantities for each vertex $v$ in $T$.\\
+\begin{itemize}
+    \item $G(v)=$ maximum number of paths contained in the subtree rooted at \(v\), with \(v\) unused.
+    \item $H(v,d)=$ maximum number of paths in the subtree, subject to a distinguished path that starts \(d\) edges below \(v\) and travels upward through \(v\). When \(d=k\), the distinguished path ends at \(v\) and counts as one complete path.
+    \item $H(v,0)=G(v)=$ the distinguished path starts at $v$, but has not yet been completed within the subtree.
+    \item An impossible state has value $-\infty$. (Can assign a large negative number to represent this case)
+\end{itemize}Then the required answer is \[\max\{G(r), H(r, k)\}.\]
+So we need to compute $G(v)$ and $H(v, d)$ for all vertices $v$ in $T$ and for all $1\leq d\leq k$. We proceed via recursion.
+
+\subsection{Recurrence for $G(v)$}
+Let $u_1, \ldots, u_m$ be the children of $v$. For every $1\leq j\leq m$, the maximum number of $k$-length paths that end at $u_j$ is $\max\{G(u_j), H(u_j, k)\}$. Thus, \[G(v) = \sum_{j=1}^m \max\{G(u_j), H(u_j, k)\}.\]
+
+\subsection{Recurrence for $H(v, d)$}
+For $1\leq d < k$, let $u$ be that child of $v$ such that the distinguished path goes through $u$. Then, the maximum number of $k$-length paths that can be chosen in the subtree, keeping $u$ fixed, is \[H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}.\]Therefore, we have the following recurrence \[H(v, d) = \max_{u \text{ child of } v} \left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right)\] for $1\leq d < k$.
+
+When $d = k$, then the distingueshed path finishes at $v$, so this path must be counted in the final sum. This gives \[H(v, k) = 1 + \max_{u \text{ child of } v}\left(H(u, k-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right).\]
+Therefore, \[H(v, d) = \textbf{1}_{\{d = k\}} + \max_{u \text{ child of } v} \left(H(u, d-1) + \sum_{\substack{w \text{ child of } v\\ w\neq u}}\max\{G(w), H(w, k)\}\right)\]for every vertex $v$ and $1\leq d\leq k$.
+So, our final answer is $$\max\{G(r), H(r, k)\}.$$
+
+\subsection{Pseudocode}
+Below is the pseudocode for the algorithm. 
+\begin{algorithm}[H]
+\caption{\textbf{Maximum Number of Climbers Calculation}}\label{alg:max_climbers}
+\begin{algorithmic}
+    \Statex \textbf{ALGORITHM} \textsc{MaximumClimbers}($T, n, k$)
+    \Statex \textbf{Input:} Rooted tree $T$ with $n$ vertices, Positive integer $k$
+    \Statex \textbf{Output:} Maximum number of vertex-disjoint upward paths of exactly $k$ edges
+    \Statex \rule{\linewidth}{0.5pt}
+    
+    \For{each vertex $v$, in postorder}
+        \State $G[v] \gets 0$
+        
+        \For{each child $u$ of $v$}
+            \State $G[v] \gets G[v] + \max(G[u], H[u, k])$
+        \EndFor
+        
+        \State $H[v, 0] \gets G[v]$
+        
+        \For{$d \gets 1$ \textbf{to} $k$}
+            \State $H[v, d] \gets -\infty$
+            
+            \For{each child $u$ of $v$}
+                \State $\mathit{other} \gets G[v] - \max(G[u], H[u, k])$
+                
+                \If{$H[u, d-1] \neq -\infty$}
+                    \State $\mathit{candidate} \gets H[u, d-1] + \mathit{other}$
+                    
+                    \If{$d = k$}
+                        \State $\mathit{candidate} \gets \mathit{candidate} + 1$
+                    \EndIf
+                    
+                    \State $H[v, d] \gets \max(H[v, d], \mathit{candidate})$
+                \EndIf
+            \EndFor
+        \EndFor
+    \EndFor
+    
+    \Statex \rule{\linewidth}{0.3pt}
+    \State \textbf{return} $\max(G[r], H[r, k])$
+\end{algorithmic}
+\end{algorithm}
+
+\section{Analysis of Algorithm}
+\subsection{Time Complexity}
+Let $n$ be the number of vertices in the rooted tree $T$, and let $k$ be the required number of edges in each climbing path.
+
+\begin{itemize}
+    \item \textit{Processing the vertices} -- The outer loop processes every vertex exactly once, in postorder. Hence, it executes $n$ times.
+    \item \textit{Computing $G(v)$} -- For each vertex $v$, the algorithm iterates over all children $u$ of $v$ to compute $G(v)$. Each iteration requires constant time, since it evaluates $\max\{G(u),H(u,k)\}$ and performs an addition.
+\end{itemize}
+
+Let $c(v)$ denote the number of children of vertex $v$. The total time spent computing all values $G(v)$ is therefore
+
+\[
+\sum_{v\in T} O(c(v)).
+\]
+
+In a rooted tree with $n$ vertices, every vertex except the root has exactly one parent. Consequently, the total number of child relationships is $n-1$, so
+
+\[
+\sum_{v\in T}c(v)=n-1.
+\]
+
+It follows that computing all values $G(v)$ takes
+
+\[
+O\left(\sum_{v\in T}c(v)\right)=O(n).
+\]
+
+\begin{itemize}
+    \item \textit{Computing $H(v,d)$} -- For each vertex $v$, the algorithm computes the states $H(v,d)$ for $d=1,\ldots,k$. Thus, there are $k$ iterations of the outer loop for each vertex.
+\end{itemize}
+
+\noindent For each pair $(v,d)$, the algorithm iterates over every child $u$ of $v$. Each iteration takes constant time since the value `other' is computed using the already computed value $G(v)$, and the remaining operations involve comparisons, additions, and assignments. The algorithm does not iterate over the other children again to calculate their contribution.\\
+
+Therefore, the total time spent computing all values $H(v,d)$ is
+
+\[\sum_{v\in T}\sum_{d=1}^{k}O(c(v))= O\left(k\sum_{v\in T}c(v)\right)= O(k(n-1))= O(nk).\]
+
+\begin{itemize}
+    \item \textit{Computing the final answer} -- After all states have been computed, the algorithm returns $\max\{G(r),H(r,k)\}$, which requires $O(1)$ time.
+\end{itemize}
+
+Combining all the costs, the total running time is \[T(n,k)=O(n)+O(nk)+O(1)=O(nk).\]
+
+Thus, the time complexity of the algorithm is $O(nk).$
+
+\subsection{Space Complexity}
+We now analyze the additional memory required by Algorithm.
+
+\begin{itemize}
+    \item \textit{Dynamic programming tables} -- The algorithm stores one value $G(v)$ for each vertex $v$, requiring $O(n)$ space. It also stores $H(v,d)$ for every vertex $v$ and every $d\in\{0,1,\ldots,k\}$. There are $n(k+1)$ such states, so the space required for this table is \[O(n(k+1))=O(nk)\] for $k\geq 1$.
+    \item \textit{Tree representation} -- The rooted tree can be represented using a list of children for each vertex. Since a tree with $n$ vertices has $n-1$ edges, this representation requires $O(n)$ space.
+    \item \textit{Auxiliary variables} -- The variables used inside the loops, such as `other' and `candidate', require $O(1)$ additional space at any one time. 
+\end{itemize}
+
+The algorithm therefore uses $S(n,k)=O(n)+O(nk)+O(1)=O(nk).$
+
+Hence, the space complexity is $O(nk).$
+
+\section{Proof of Correctness}
+We prove the correctness of the algorithm by induction on the height of the subtree rooted at a vertex $v$.
+
+For each vertex $v$, let $G(v)$ and $H(v,d)$ be as before. The distinguished path is counted when $d=k$. Also, note that $H(v,0)=G(v)$.
+
+\begin{itemize}
+  \item \textit{Base Case.} If $v$ is a leaf, no positive-length path can extend upward from a descendant of $v$. Hence $G(v)=0$, and $H(v,d)=-\infty$ (because in this case, we don't even have a path below $v$) for $1\leq d\leq k$. Thus the states are correct.
+  \item \textit{Inductive Step.} Assume the states are correct for every child of $v$. For simplicity we write \[M(u)=\max\{G(u),H(u,k)\}.\]
+  If $v$ is unused, every selected path lies entirely in one child subtree. Since distinct child subtrees are vertex-disjoint, their optimal solutions can be combined independently. Therefore, \[G(v)=\sum_{u\text{ child of }v}M(u).\]
+  If a distinguished path passes through $v$, it must enter through exactly one child $u$. The remaining child subtrees contribute at most their respective values $M(w)$. The distinguished path contributes one additional completed path precisely when $d=k$. Maximizing over the possible choices of $u$ therefore gives
+  \[H(v,d)=\max_{u\text{ child of }v}\left(H(u,d-1)+\sum_{\substack{w\text{ child of }v\\w\ne u}}M(w)+\mathbf{1}_{\{d=k\}}\right).\]
+  Every feasible solution is covered by these cases, and each combination constructed by the recurrences is feasible. Thus all states are optimal, completing the induction.
+
+  Finally, let $r$ be the root. Since at most one selected path can contain $r$, every feasible solution either leaves $r$ unused or contains a completed path ending at $r$. Hence the optimal value is \[\max\{G(r),H(r,k)\}.\]
+\end{itemize}
+Therefore, the algorithm returns the maximum number of pairwise vertex-disjoint upward paths of exactly $k$ edges. \hfill$\square$
+
+\section{Python Code}
+\subsection{GitHub link}
+The complete Python code for the algorithm is available in the project repository:
+\begin{center}
+    \url{https://github.com/anshulmath/DAA_Project}
+\end{center}
+
+\subsection{Test Cases}
+\textbf{Input Format and Execution} The algorithm is implemented in Python. The input tree is represented by a list of edges, where each edge \((u,v)\) indicates that \(u\) is the parent of \(v\). The vertices are labelled using integers from \(0\) to \(n-1\), with vertex \(0\) designated as the root. The input also specifies the number of vertices \(n\) and the required path length \(k\).
+
+\noindent For example, consider the tree with edges
+\[
+T = [(0,1),(0,2),(1,3),(1,4),(2,5),(2,6)].
+\]
+This represents a rooted tree with seven vertices and root \(0\) (Figure~\ref{fig:test-cases}, Test 6).
+
+To execute the algorithm, provide the edge list, the number of vertices, and the required path length to the function `MaximumClimbers(T, n, k)`. For the example above, taking \(k=2\), the function returns \(1\), which is the maximum number of pairwise vertex-disjoint upward paths of exactly two edges.
+
+The program can be executed using Python 3. The source code and test cases are provided with the project files.
+
+We test the algorithm on trees with different structures,
+including a single vertex, a chain, a star, and a branching
+tree. The expected output is computed manually for each test case. The test cases are summarized in Figure~\ref{fig:test-cases} section $1.1$.
+
 
 \noindent
 The following table verifies the Python implementation on all six
@@ -436,5 +448,9 @@ paths involving exactly $k$ edges in a rooted tree $T$ with $n$ vertices. To thi
     \item Time complexity: $O(nk)$
     \item Space complexity: $O(nk)$
 \end{itemize}
-\textbf{NOTE:} These complexities are the complexities of the dynamic programming algorithm. The overall complexity of the algorithm will also include the time taken to read the input and construct the tree, which depends on the input format and is not included in the above analysis.
+\textbf{NOTE:} These complexities are the complexities of the dynamic programming algorithm. The overall complexity of the algorithm will also include the time taken to read the input and construct the tree, which depends on the input format and is not included in the above analysis, but the way we have implimented does not interfere with the time complexity of the algorithm.
+\begin{center}
+  \decofourleft\decofourleft\decofourleft
+\end{center}
+
 \end{document}
